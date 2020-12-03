@@ -7,8 +7,10 @@ module.exports = env => {
     entry: './src/app.js',
     devtool: 'source-map',
     devServer: {
+      disableHostCheck: true,
       contentBase: './dist',
       host: '0.0.0.0',
+      port: 8081,
     },
     output: {
       path: path.resolve(__dirname, 'dist'),

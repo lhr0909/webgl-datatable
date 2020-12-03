@@ -1,13 +1,15 @@
-import {Application, Container, Graphics} from 'pixi.js';
-import Cell from "./Cell";
-import {cellHeight, cellWidth, columns, Grid, leftPaneWidth, rows} from "./Grid";
+import { Application, Loader } from 'pixi.js';
+import { ReplaySubject } from 'rxjs';
+
+import { columns, rows, cellWidth, cellHeight } from './consts';
+import { Grid } from "./Grid";
 
 /**
  * Profiling
  */
 const handleSetupEnd = () => {
   const endTime = new Date();
-  document.querySelector('.profiler').innerHTML = "Loaded in " + (endTime - window.startTime) / 1000 + " seconds";
+  console.log("Loaded in " + (endTime - window.startTime) / 1000 + " seconds");
   document.querySelector('.loader').innerHTML = "";
 };
 
@@ -21,27 +23,30 @@ const app = new Application({
 app.renderer.backgroundColor = 0xffffff;
 document.querySelector(".canvas-container").appendChild(app.view);
 
+const resizeSubject = new ReplaySubject(1);
+
 const resize = () => {
   app.renderer.resize(window.innerWidth, window.innerHeight);
+  resizeSubject.next({ width: window.innerWidth, height: window.innerHeight });
 };
 
 window.addEventListener('resize', resize);
 resize();
 
-
 const onAssetsLoaded = () => {
   /**
    * Initialize grid
    */
-  const grid = new Grid({handleSetupEnd});
+  const grid = new Grid({ resizeSubject, handleSetupEnd });
   app.stage.addChild(grid);
-
 
   /**
    * Handle scroll
    */
   const scrollContainer = document.querySelector(".scroll-container");
   const scrollWrapper = document.querySelector(".scroll-wrapper");
+  // scrollWrapper.style.left = cellWidth + "px";
+  scrollWrapper.style.top = cellHeight + "px";
   scrollContainer.style.width = columns * cellWidth + "px";
   scrollContainer.style.height = rows * cellHeight + "px";
 
@@ -54,6 +59,8 @@ const onAssetsLoaded = () => {
    * Handle double click
    */
   const cellInput = document.querySelector(".cell-input");
+  cellInput.style.height = cellHeight + "px";
+  cellInput.style.width = cellWidth + "px";
   let clickedCell = null;
 
   scrollContainer.addEventListener('dblclick', (e) => {
@@ -102,7 +109,6 @@ const onAssetsLoaded = () => {
   });
 };
 
-PIXI.loader
+Loader.shared
     .add('arial', 'assets/arial/arial.fnt')
     .load(onAssetsLoaded);
-

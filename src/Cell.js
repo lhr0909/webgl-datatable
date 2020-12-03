@@ -1,13 +1,4 @@
-import {Container, Graphics, Sprite, Text} from "pixi.js";
-import {BitmapText} from "pixi.js/lib/extras/index";
-
-const textStyle = {
-  fontFamily: "Arial",
-  fontSize: 12,
-  fill: "#222222",
-  antialias: true,
-  resolution: 1
-};
+import { Container, Sprite, BitmapText, Texture } from "pixi.js";
 
 export default class Cell extends Container {
   constructor({isHeader, isOdd, value, width, height, textAlign}) {
@@ -18,12 +9,12 @@ export default class Cell extends Container {
     this.cellHeight = height;
     this.textAlign = textAlign;
 
-    const border = new PIXI.Sprite(PIXI.Texture.WHITE);
+    const border = new Sprite(Texture.WHITE);
     border.width = width;
     border.height = height;
     this.addChild(border);
 
-    const bg = new Sprite(PIXI.Texture.WHITE);
+    const bg = new Sprite(Texture.WHITE);
     bg.width = width - 2;
     bg.height = height - 2;
     bg.position.set(1, 1);
@@ -36,6 +27,8 @@ export default class Cell extends Container {
     }
 
     this.addChild(bg);
+    this.isOdd = isOdd;
+    this.bg = bg;
 
     if(value) {
       this.setText(value);
@@ -62,5 +55,14 @@ export default class Cell extends Container {
 
     // FIXME fix line-height in Bitmap Text generator
     this.textField.position.y = this.cellHeight / 2 - this.textField.height / 2 - 2;
+  }
+
+  setOdd(isOdd) {
+    if(isOdd) {
+      this.bg.tint = 0xf1f1f1;
+    } else {
+      this.bg.tint = 0xfafafa;
+    }
+    this.isOdd = isOdd;
   }
 }
