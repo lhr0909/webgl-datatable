@@ -23,22 +23,22 @@ export default class CircularArray {
   }
 
   get headNext() {
-    this.headIndex = (this.headIndex + 1) % this.array.length;
+    this.headIndex = this.nextIndex(this.headIndex);
     return this.head;
   }
 
   get headPrev() {
-    this.headIndex = ((this.headIndex === 0) ? (this.array.length - 1) : this.headIndex - 1) % this.array.length;
+    this.headIndex = this.prevIndex(this.headIndex);
     return this.head;
   }
 
   peekHeadNext() {
-    const idx = (this.headIndex + 1) % this.array.length;
+    const idx = this.nextIndex(this.headIndex);
     return this.get(idx);
   }
 
   peekHeadPrev() {
-    const idx = ((this.headIndex === 0) ? (this.array.length - 1) : this.headIndex - 1) % this.array.length;
+    const idx = this.prevIndex(this.headIndex);
     return this.get(idx);
   }
 
@@ -47,22 +47,30 @@ export default class CircularArray {
   }
 
   get tailNext() {
-    this.tailIndex = (this.tailIndex + 1) % this.array.length;
+    this.tailIndex = this.nextIndex(this.tailIndex);
     return this.tail;
   }
 
   get tailPrev() {
-    this.tailIndex = ((this.tailIndex === 0) ? (this.array.length - 1) : this.tailIndex - 1) % this.array.length;
+    this.tailIndex = this.prevIndex(this.tailIndex);
     return this.tail;
   }
 
   peekTailNext() {
-    const idx = (this.tailIndex + 1) % this.array.length;
+    const idx = this.nextIndex(this.tailIndex);
     return this.get(idx);
   }
 
   peekTailPrev() {
-    const idx = ((this.tailIndex === 0) ? (this.array.length - 1) : this.tailIndex - 1) % this.array.length;
+    const idx = this.prevIndex(this.tailIndex);
     return this.get(idx);
+  }
+
+  prevIndex(idx) {
+    return ((idx === 0) ? (this.array.length - 1) : idx - 1) % this.array.length;
+  }
+
+  nextIndex(idx) {
+    return (idx + 1) % this.array.length;
   }
 }

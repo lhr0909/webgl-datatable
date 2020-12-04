@@ -1,7 +1,9 @@
 import { Application, Loader } from 'pixi.js';
 import { ReplaySubject } from 'rxjs';
+import * as Ops from 'rxjs/operators';
 
-import { columns, rows, cellWidth, cellHeight } from './consts';
+import { columns, rows, cellWidth, cellHeight, throttleTimeout, debounceTimeout, bufferFactor, marginFactor } from './consts';
+import CoordsCalculator from './CoordsCalculator';
 import { Grid } from "./Grid";
 
 /**
@@ -24,6 +26,31 @@ app.renderer.backgroundColor = 0xffffff;
 document.querySelector(".canvas-container").appendChild(app.view);
 
 const resizeSubject = new ReplaySubject(1);
+const scrollSubject = new ReplaySubject(1);
+
+const xCoordsCalc = new CoordsCalculator({
+  resizeSubject: resizeSubject.pipe(Ops.pluck('width')),
+  scrollSubject: scrollSubject.pipe(Ops.pluck('scrollLeft')),
+  totalCount: columns - 1,
+  gap: cellWidth,
+  throttleTimeout,
+  debounceTimeout,
+  bufferFactor,
+  marginFactor,
+});
+xCoordsCalc.changeSubject.subscribe(x => console.log('x coords changes', x));
+
+const yCoordsCalc = new CoordsCalculator({
+  resizeSubject: resizeSubject.pipe(Ops.pluck('height')),
+  scrollSubject: scrollSubject.pipe(Ops.pluck('scrollTop')),
+  totalCount: rows - 1,
+  gap: cellHeight,
+  throttleTimeout,
+  debounceTimeout,
+  bufferFactor,
+  marginFactor,
+});
+yCoordsCalc.changeSubject.subscribe(y => console.log('y coords change', y));
 
 const resize = () => {
   app.renderer.resize(window.innerWidth, window.innerHeight);
@@ -37,7 +64,7 @@ const onAssetsLoaded = () => {
   /**
    * Initialize grid
    */
-  const grid = new Grid({ resizeSubject, handleSetupEnd });
+  const grid = new Grid({ scrollSubject, xCoordsCalc, yCoordsCalc, handleSetupEnd });
   app.stage.addChild(grid);
 
   /**
@@ -51,9 +78,9 @@ const onAssetsLoaded = () => {
   scrollContainer.style.height = rows * cellHeight + "px";
 
   scrollWrapper.addEventListener('scroll', (e) => {
-    grid.update(e.target.scrollLeft, e.target.scrollTop);
+    const { scrollLeft, scrollTop } = e.target;
+    scrollSubject.next({ scrollLeft, scrollTop });
   });
-
 
   /**
    * Handle double click
