@@ -6,7 +6,7 @@ import Cell from './Cell';
 import { cellWidth, cellHeight } from './consts';
 
 export default class RecycledRow extends Container {
-  constructor({ scrollSubject, xCoordsCalc, cellData, isHeader, initialX, isOdd }) {
+  constructor({ scrollSubject, xCoordsCalc, cellData, isHeader, initialX }) {
     super();
     // console.log("initializing recycled row");
     this.x = initialX;
@@ -17,7 +17,7 @@ export default class RecycledRow extends Container {
     this.cells = new CircularArray([]);
     this.cellData = cellData;
 
-    this._setUpIntialCells(isHeader, isOdd);
+    this._setUpIntialCells(isHeader);
     this._handleScrollLeft();
     this._subscribeUpdates();
   }
@@ -28,14 +28,13 @@ export default class RecycledRow extends Container {
     });
   }
 
-  _setUpIntialCells(isHeader, isOdd) {
+  _setUpIntialCells(isHeader) {
     this.xCoordsCalc.changeSubject.pipe(
       Ops.take(1),
     ).subscribe(({ headIndex, tailIndex, changes }) => {
       this.cells.array = changes.map(({ idx, val }) => {
         const cell = new Cell({
           isHeader,
-          isOdd,
           width: cellWidth,
           height: cellHeight,
           textAlign: 'center',
@@ -52,12 +51,11 @@ export default class RecycledRow extends Container {
   }
 
   _subscribeUpdates() {
-    this.xCoordsCalc.changeSubject.subscribe(({ headIndex, tailIndex, changes }) => {
+    this.xCoordsCalc.changeSubject.pipe(Ops.skip(1)).subscribe(({ headIndex, tailIndex, changes }) => {
       changes.forEach(({ idx, val }) => {
         const cell = this.cells.get(idx);
         cell.x = val;
         cell.setText(this.cellData[Math.floor(val / cellWidth)]);
-        // cell.setOdd(!this.cells.get(this.cells.prevIndex(idx)).isOdd);
       });
 
       // set the mapping to be the same

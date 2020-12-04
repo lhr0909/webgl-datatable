@@ -25,15 +25,14 @@ export class Grid extends Container {
       cellData.push(row);
     }
 
-    // use local variables in loop for performance
-    // const cellContainer = new RecycledGrid({
-    //   scrollSubject,
-    //   xCoordsCalc,
-    //   yCoordsCalc,
-    //   cellData: cellData.map(row => row.slice(1)),
-    //   initialX: cellWidth,
-    //   initialY: cellHeight,
-    // });
+    const cellContainer = new RecycledGrid({
+      scrollSubject,
+      xCoordsCalc,
+      yCoordsCalc,
+      cellData: cellData.map(row => row.slice(1)),
+      initialX: cellWidth,
+      initialY: cellHeight,
+    });
     const topHeaderContainer = new RecycledRow({
       scrollSubject,
       xCoordsCalc,
@@ -49,9 +48,8 @@ export class Grid extends Container {
       initialY: cellHeight,
     });
     const topLeftHeaderContainer = new Container();
-    const cells = [];
 
-    // cellContainer.interactiveChildren = false;
+    cellContainer.interactiveChildren = false;
     topHeaderContainer.interactiveChildren = false;
     leftHeaderContainer.interactiveChildren = false;
     topLeftHeaderContainer.interactiveChildren = false;
@@ -67,12 +65,12 @@ export class Grid extends Container {
     topLeftCell.setText(headers[0]);
     topLeftHeaderContainer.addChild(topLeftCell);
 
-    // this.cellContainer = cellContainer;
+    this.cellContainer = cellContainer;
     this.topHeaderContainer = topHeaderContainer;
     this.leftHeaderContainer = leftHeaderContainer;
 
     // layering at the right order
-    // this.addChild(cellContainer);
+    this.addChild(cellContainer);
     this.addChild(topHeaderContainer);
     this.addChild(leftHeaderContainer);
     this.addChild(topLeftHeaderContainer);

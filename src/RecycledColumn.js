@@ -35,7 +35,6 @@ export default class RecycledColumn extends Container {
       this.cells.array = changes.map(({ idx, val }) => {
         const cell = new Cell({
           isHeader,
-          isOdd: idx % 2 === 0,
           width: cellWidth,
           height: cellHeight,
           textAlign: 'center',
@@ -52,12 +51,11 @@ export default class RecycledColumn extends Container {
   }
 
   _subscribeUpdates() {
-    this.yCoordsCalc.changeSubject.subscribe(({ headIndex, tailIndex, changes }) => {
+    this.yCoordsCalc.changeSubject.pipe(Ops.skip(1)).subscribe(({ headIndex, tailIndex, changes }) => {
       changes.forEach(({ idx, val }) => {
         const cell = this.cells.get(idx);
         cell.y = val;
         cell.setText(this.cellData[Math.floor(val / cellHeight)]);
-        cell.setOdd(!this.cells.get(this.cells.prevIndex(idx)).isOdd);
       });
 
       // set the mapping to be the same

@@ -43,7 +43,7 @@ xCoordsCalc.changeSubject.subscribe(x => console.log('x coords changes', x));
 const yCoordsCalc = new CoordsCalculator({
   resizeSubject: resizeSubject.pipe(Ops.pluck('height')),
   scrollSubject: scrollSubject.pipe(Ops.pluck('scrollTop')),
-  totalCount: rows - 1,
+  totalCount: rows,
   gap: cellHeight,
   throttleTimeout,
   debounceTimeout,

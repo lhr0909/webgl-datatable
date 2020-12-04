@@ -1,7 +1,7 @@
 import { Container, Sprite, BitmapText, Texture } from "pixi.js";
 
 export default class Cell extends Container {
-  constructor({isHeader, isOdd, value, width, height, textAlign}) {
+  constructor({isHeader, value, width, height, textAlign}) {
     super();
 
     this.editable = !isHeader;
@@ -19,16 +19,8 @@ export default class Cell extends Container {
     bg.height = height - 2;
     bg.position.set(1, 1);
     bg.y = 1;
-
-    if(isOdd) {
-      bg.tint = 0xf1f1f1;
-    } else {
-      bg.tint = 0xfafafa;
-    }
-
+    bg.tint = 0xf1f1f1;
     this.addChild(bg);
-    this.isOdd = isOdd;
-    this.bg = bg;
 
     if(value) {
       this.setText(value);
@@ -55,14 +47,5 @@ export default class Cell extends Container {
 
     // FIXME fix line-height in Bitmap Text generator
     this.textField.position.y = this.cellHeight / 2 - this.textField.height / 2 - 2;
-  }
-
-  setOdd(isOdd) {
-    if(isOdd) {
-      this.bg.tint = 0xf1f1f1;
-    } else {
-      this.bg.tint = 0xfafafa;
-    }
-    this.isOdd = isOdd;
   }
 }
