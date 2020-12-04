@@ -1,5 +1,5 @@
-export const columns = 300;
-export const rows = 60;
+export const columns = 600;
+export const rows = 600;
 export const cellWidth = 100;
 export const cellHeight = 30;
 export const throttleTimeout = 20;

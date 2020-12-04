@@ -20,7 +20,7 @@ export class Grid extends Container {
     for (let i = 0; i < rows; i++) {
       const row = [];
       for (let j = 0; j < columns; j++) {
-        row.push(`${(j + 1) * 10000 + (i + 1)}`);
+        row.push(`${(j + 1) * 100000 + (i + 1)}`);
       }
       cellData.push(row);
     }

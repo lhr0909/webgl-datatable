@@ -60,7 +60,7 @@ export default class CoordsCalculator {
 
         const changes = [];
 
-        while (scrollOffset - currentHead > margin * this.gap) {
+        while (scrollOffset - currentHead >= margin * this.gap) {
           // peek previous head
           const prevHead = this.coordinates.peekHeadPrev();
           // move head
@@ -72,7 +72,7 @@ export default class CoordsCalculator {
           currentTail = this.coordinates.tailNext;
         }
 
-        while (currentTail - size - scrollOffset > margin * this.gap) {
+        while (currentTail - size - scrollOffset >= margin * this.gap) {
           // peek next tail
           const nextTail = this.coordinates.peekTailNext();
           // move tail

@@ -2,7 +2,7 @@ import { Container } from 'pixi.js';
 import * as Ops from 'rxjs/operators';
 
 import CircularArray from './CircularArray';
-import { cellWidth, cellHeight } from './consts';
+import { cellHeight } from './consts';
 import RecycledRow from './RecycledRow';
 
 export default class RecycledGrid extends Container {
@@ -22,7 +22,14 @@ export default class RecycledGrid extends Container {
     this.cellData = cellData;
 
     this._setUpIntialRows();
+    this._handleScrollTop();
     this._subscribeUpdates();
+  }
+
+  _handleScrollTop() {
+    this.scrollSubject.subscribe(({ scrollTop }) => {
+      this.y = this.initialY - scrollTop;
+    });
   }
 
   _setUpIntialRows() {
@@ -48,5 +55,20 @@ export default class RecycledGrid extends Container {
   }
 
   _subscribeUpdates() {
+    this.yCoordsCalc.changeSubject.pipe(
+      Ops.skip(1),
+    ).subscribe(({ headIndex, tailIndex, changes }) => {
+      changes.forEach(({ idx, val }) => {
+        const row = this.rows.get(idx);
+        row.y = val;
+        const cellData = this.cellData[Math.floor(val / cellHeight)];
+        if (cellData) {
+          row.setCellData(cellData.slice());
+        }
+      });
+
+      // set the mapping to be the same
+      this.rows.updateIndices(headIndex, tailIndex);
+    });
   }
 }

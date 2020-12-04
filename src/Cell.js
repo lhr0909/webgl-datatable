@@ -12,6 +12,7 @@ export default class Cell extends Container {
     const border = new Sprite(Texture.WHITE);
     border.width = width;
     border.height = height;
+    border.tint = 0xf1f1f1;
     this.addChild(border);
 
     const bg = new Sprite(Texture.WHITE);
@@ -19,7 +20,6 @@ export default class Cell extends Container {
     bg.height = height - 2;
     bg.position.set(1, 1);
     bg.y = 1;
-    bg.tint = 0xf1f1f1;
     this.addChild(bg);
 
     if(value) {

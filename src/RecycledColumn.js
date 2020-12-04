@@ -51,11 +51,16 @@ export default class RecycledColumn extends Container {
   }
 
   _subscribeUpdates() {
-    this.yCoordsCalc.changeSubject.pipe(Ops.skip(1)).subscribe(({ headIndex, tailIndex, changes }) => {
+    this.yCoordsCalc.changeSubject.pipe(
+      Ops.skip(1),
+    ).subscribe(({ headIndex, tailIndex, changes }) => {
       changes.forEach(({ idx, val }) => {
         const cell = this.cells.get(idx);
         cell.y = val;
-        cell.setText(this.cellData[Math.floor(val / cellHeight)]);
+        const cellData = this.cellData[Math.floor(val / cellHeight)];
+        if (cellData) {
+          cell.setText(cellData);
+        }
       });
 
       // set the mapping to be the same

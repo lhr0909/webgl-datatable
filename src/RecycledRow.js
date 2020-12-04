@@ -22,6 +22,13 @@ export default class RecycledRow extends Container {
     this._subscribeUpdates();
   }
 
+  setCellData(cellData) {
+    this.cells.array.forEach(cell => {
+      cell.setText(cellData[Math.floor(cell.x / cellWidth)]);
+    });
+    this.cellData = cellData;
+  }
+
   _handleScrollLeft() {
     this.scrollSubject.subscribe(({ scrollLeft }) => {
       this.x = this.initialX - scrollLeft;
@@ -51,11 +58,16 @@ export default class RecycledRow extends Container {
   }
 
   _subscribeUpdates() {
-    this.xCoordsCalc.changeSubject.pipe(Ops.skip(1)).subscribe(({ headIndex, tailIndex, changes }) => {
+    this.xCoordsCalc.changeSubject.pipe(
+      Ops.skip(1),
+    ).subscribe(({ headIndex, tailIndex, changes }) => {
       changes.forEach(({ idx, val }) => {
         const cell = this.cells.get(idx);
         cell.x = val;
-        cell.setText(this.cellData[Math.floor(val / cellWidth)]);
+        const cellData = this.cellData[Math.floor(val / cellWidth)];
+        if (cellData) {
+          cell.setText(cellData);
+        }
       });
 
       // set the mapping to be the same
